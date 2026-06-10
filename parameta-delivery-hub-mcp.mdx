@@ -1,0 +1,197 @@
+---
+title: "Parameta Delivery Hub MCP"
+description: "Connect your AI tools to Parameta Delivery Hub documentation to discover datasets, retrieve connection details, and accelerate integration with WebSocket, Snowflake, SFTP, FIX, and more."
+---
+
+## About the Parameta Delivery Hub MCP
+
+The Parameta Delivery Hub MCP (Model Context Protocol) provides a unified way for clients to **discover, access, and integrate with Parameta data delivery services** using AI-powered tools.
+
+By connecting our MCP server to your preferred AI assistant (e.g. Claude, ChatGPT, VS Code), you can:
+
+- Discover available Parameta delivery channels
+- Retrieve corresponding connection and configuration details
+- Generate integration examples (SQL queries, subscription messages, file formats)
+- Troubleshoot connectivity or entitlement issues
+
+The MCP connects your AI tools directly to Parameta Solutions Delivery Hub documentation, enabling **real-time, guided integration support** without manually searching documentation.
+
+<Tip>
+  Some AI tools like Claude support both MCP and skills. MCP gives access to your content, while skills instruct agents how to use that content effectively. They're complementary and connecting your MCP server gives agents access to both.
+</Tip>
+
+---
+
+## Common Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Snowflake Data Access" icon="database">
+    - Discover available datasets and tables
+    - Generate SQL queries for analysis
+    - Export data into other tools and systems
+  </Card>
+
+  <Card title="WebSocket Streaming" icon="stream">
+    - Retrieve endpoints and authentication methods
+    - Generate subscription payloads
+    - Stream data into real-time applications
+  </Card>
+
+  <Card title="SFTP Data Delivery" icon="folder">
+    - Access file naming conventions and schedules
+    - Retrieve sample file structures
+    - Validate connectivity
+  </Card>
+
+  <Card title="Troubleshooting & Support" icon="hammer">
+    - Diagnose connectivity issues
+    - Identify missing entitlements
+    - Provide configuration guidance
+  </Card>
+</CardGroup>
+
+<Note>
+  For detailed documentation on each delivery channel, see:
+
+  - [Snowflake](https://docs.snowflake.com/en/user-guide/data-sharing-reader-create)
+  - [WebSocket](https://parametasolutions.mintlify.app/direct-delivery/real-time#websocket)
+  - [SFTP](https://parametasolutions.mintlify.app/direct-delivery/snap-files#parameta-sftp)
+  - [FIX](https://parametasolutions.mintlify.app/direct-delivery/real-time#fix-api-5-0-sp2)
+</Note>
+
+---
+
+## How It Works
+
+When connected, your AI assistant can securely query Parameta Solutions Delivery Hub documentation via a MCP server.
+
+- The AI automatically retrieves relevant documentation when needed
+- Responses are based on the latest available content
+- You can ask questions in natural language
+
+Example:
+
+> "How do I access Parameta FX data in Snowflake?"
+
+You do not need to manually search documentation, the MCP connection enables **context-aware, guided responses**.
+
+---
+
+## Connect to the Parameta Delivery Hub MCP
+
+Here's a few ways in which you can connect to our MCP server to your preferred AI tools.
+
+<Tabs>
+  <Tab title="VS Code">
+    <Steps>
+      <Step title="Get our MCP server URL">
+        This is: `https://parametasolutions.mintlify.app/mcp`
+      </Step>
+      <Step title="Create your VS Code configuration">
+        1. Create a `.vscode/mcp.json` file.
+        2. In `mcp.json`, configure your server:
+
+        ```json
+        {
+          "servers": {
+            "parameta-solutions-documentation": {
+              "type": "http",
+              "url": "https://parametasolutions.mintlify.app/mcp"
+            }
+          }
+        }
+        ```
+      </Step>
+    </Steps>
+
+    See the [VS Code documentation](https://code.visualstudio.com/docs/copilot/chat/mcp-servers) for more details.
+  </Tab>
+  <Tab title="Cursor">
+    <Steps>
+      <Step title="Get our MCP server URL">
+        Ours is: `https://parametasolutions.mintlify.app/mcp`
+      </Step>
+      <Step title="Create your MCP server confiugration.">
+        1. Use <kbd>Command</kbd> \+ <kbd>Shift</kbd> \+ <kbd>P</kbd> (<kbd>Ctrl</kbd> \+ <kbd>Shift</kbd> \+ <kbd>P</kbd> on Windows) to open the command palette.
+        2. Search for `Open MCP settings`.
+        3. Click **Add custom MCP**. This opens the `mcp.json` file.
+        4. In `mcp.json`, configure your server:
+
+        ```json
+        {
+          "mcpServers": {
+            "parameta-solutions-documentation": {
+              "url": "https://parametasolutions.mintlify.app/mcp"
+            }
+          }
+        }
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Claude">
+    To use the Mintlify MCP server with Claude:
+
+    <Steps>
+      <Step title="Add the Mintlify MCP server to Claude">
+        1. Navigate to the [Connectors](https://claude.ai/settings/connectors) page in the Claude settings.
+        2. Click **Add custom connector**.
+        3. Add the MCP server:
+
+        - Name: `Parameta Solutions Documentation`
+        - URL: `https://parametasolutions.mintlify.app/mcp`
+
+        4. Click **Add**.
+      </Step>
+      <Step title="Access the MCP server in your chat">
+        1. When using Claude, click the attachments button (the plus icon).
+        2. Select the Mintlify MCP server.
+        3. Ask Claude a question about our documentation.
+      </Step>
+    </Steps>
+
+    See the [Model Context Protocol documentation](https://modelcontextprotocol.io/docs/tutorials/use-remote-mcp-server#connecting-to-a-remote-mcp-server) for more details.
+  </Tab>
+  <Tab title="Claude Code">
+    To use the Mintlify MCP server with Claude Code, run the following command:
+
+    ```bash
+    claude mcp add --transport http Parameta Solutions Documentation https://parametasolutions.mintlify.app/mcp
+    ```
+
+    Test the connection by running:
+
+    ```bash
+    claude mcp list
+    ```
+
+    See the [Claude Code documentation](https://docs.anthropic.com/en/docs/claude-code/mcp#installing-mcp-servers) for more details.
+  </Tab>
+</Tabs>
+
+## Rate Limits
+
+To ensure service availability, usage limits are applied:
+
+| Scope | Limit | Description |
+| :-- | :-- | :-- |
+| Per user (IP address) | 5,000 requests per hour | Limits how frequently a single user can query the MCP. |
+| Per platform | Up to 10,000 requests per hour | Limits total requests across all users of the MCP service. |
+
+These limits are sufficient for typical interactive and development use.
+
+<Note>
+  If you require higher limits, please contact [Parameta Solutions](mailto:support@parametasolutions.com).
+</Note>
+
+## Authentication & Entitlements
+
+The MCP server provides guidance and documentation—it does not grant data access directly.
+
+To access Parameta Solutions data, you must have:
+
+- Active commercial agreement
+- Valid credentials (API keys, Snowflake access, etc.)
+- Correct entitlements for specific datasets
+
+If you are unable to access data, contact your Parameta Solutions representative.

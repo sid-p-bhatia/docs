@@ -1,0 +1,203 @@
+asyncapi: 3.0.0
+info:
+  title: Parameta Solutions - Websocket [DO NOT USE; Please request for PDF instead]
+  version: 1.0.0
+  description: >
+    WebSocket feed exchanging JSON messages. Authenticate via `auth`,
+    then receive `sub` updates (initial image + deltas).
+    NOTE: `pro` (provider status) and any client subscribe request are not fully
+    specified in the guide.
+defaultContentType: application/json
+
+servers:
+  production:
+    host: '{host}'
+    pathname: /wsj
+    protocol: wss
+    variables:
+      host:
+        description: Allocated hostname. Obtain from Parameta.
+        default: your-allocated-hostname
+
+channels:
+  /stream:
+    address: /stream
+    description: WebSocket message stream.
+    # Declare all messages that can traverse this channel
+    messages:
+      auth.request:
+        $ref: '#/components/messages/AuthRequest'
+      auth.response:
+        $ref: '#/components/messages/AuthResponse'
+      sub.update:
+        $ref: '#/components/messages/SubUpdate'
+      provider.status:
+        $ref: '#/components/messages/ProviderStatus'
+
+operations:
+  # Client -> Server: send auth
+  stream-auth-send:
+    action: send
+    channel:
+      $ref: '#/channels/~1stream'
+    summary: Client sends authentication request (`auth`).
+    messages:
+      - $ref: '#/channels/~1stream/messages/auth.request'
+
+  # Server -> Client: receive auth response
+  stream-auth-receive:
+    action: receive
+    channel:
+      $ref: '#/channels/~1stream'
+    summary: Server responds to authentication (`auth`).
+    messages:
+      - $ref: '#/channels/~1stream/messages/auth.response'
+
+  # Server -> Client: receive sub updates
+  stream-sub-updates-receive:
+    action: receive
+    channel:
+      $ref: '#/channels/~1stream'
+    summary: Server pushes initial image and subsequent deltas (`sub`).
+    messages:
+      - $ref: '#/channels/~1stream/messages/sub.update'
+
+  # Server -> Client: receive provider status
+  stream-provider-status-receive:
+    action: receive
+    channel:
+      $ref: '#/channels/~1stream'
+    summary: Server notifies provider availability/status (`pro`).
+    messages:
+      - $ref: '#/channels/~1stream/messages/provider.status'
+
+components:
+  messages:
+    AuthRequest:
+      name: auth
+      title: Authentication Request
+      summary: Client authentication message.
+      payload:
+        $ref: '#/components/schemas/AuthRequest'
+      examples:
+        - name: auth-request
+          payload:
+            msg: auth
+            user: myusername
+            passkey: '********'
+
+    AuthResponse:
+      name: auth
+      title: Authentication Response
+      summary: Server response to authentication.
+      payload:
+        $ref: '#/components/schemas/AuthResponse'
+      examples:
+        - name: auth-ok
+          payload:
+            msg: auth
+            sta: 1
+        - name: auth-failed
+          payload:
+            msg: auth
+            sta: 0
+            info: Authentication failed (check credentials)
+
+    SubUpdate:
+      name: sub
+      title: Subscription Update
+      summary: 'Initial image (`img:1`) followed by delta updates.'
+      payload:
+        $ref: '#/components/schemas/SubMessage'
+      examples:
+        - name: initial-image
+          payload:
+            msg: sub
+            pro: ACMECrypto
+            rec: DAH/ETH
+            img: 1
+            sta: 1
+            fvs:
+              BID: 0.168
+              ASK: 0.17
+        - name: delta
+          payload:
+            msg: sub
+            pro: ACMECrypto
+            rec: DAH/ETH
+            sta: 1
+            fvs:
+              BID: 0.1695
+
+    ProviderStatus:
+      name: pro
+      title: Provider Status (TBD)
+      summary: >
+        Provider availability/status notification. Schema not specified in
+        source guide.
+      payload:
+        type: object
+        additionalProperties: true
+
+  schemas:
+    AuthRequest:
+      type: object
+      required: [msg, user, passkey]
+      properties:
+        msg:
+          type: string
+          const: auth
+        user:
+          type: string
+          description: Username to authenticate with.
+        passkey:
+          type: string
+          description: Passkey to authenticate with.
+
+    AuthResponse:
+      type: object
+      required: [msg, sta]
+      properties:
+        msg:
+          type: string
+          const: auth
+        sta:
+          type: integer
+          description: 1 = success; 0 = failure.
+          enum: [0, 1]
+        info:
+          type: string
+          description: Optional diagnostic text on failure.
+
+    SubMessage:
+      type: object
+      required: [msg, pro, rec, sta, fvs]
+      properties:
+        msg:
+          type: string
+          const: sub
+        pro:
+          type: string
+          description: Name of data provider.
+        grp:
+          type: string
+          nullable: true
+          description: Optional provider group (not supported by all providers).
+        rec:
+          type: string
+          description: 'Record name (e.g., instrument).'
+        img:
+          type: integer
+          nullable: true
+          description: >
+            Present and set to 1 for the initial image; omitted on subsequent
+            updates.
+          enum: [1]
+        sta:
+          type: integer
+          description: Record/request status.
+          enum: [1, 2, 3, 4, 5, 6]
+        fvs:
+          type: object
+          description: Name/value map of field values.
+          additionalProperties: true

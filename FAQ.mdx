@@ -1,0 +1,118 @@
+---
+title: "FAQ's"
+---
+
+<AccordionGroup>
+<Accordion title="Converting Timezone">
+`event_timestamp` in the snowflake views is stored as UTC. In Snowflake it is easy to convert between time zones by using convert [timezone](https://docs.snowflake.com/en/sql-reference/functions/convert_timezone)
+
+```python
+CONVERT_TIMEZONE('UTC', 'America/New_York', event_timestamp) AS nyk_time
+```
+
+Timezone definitions can be found [here](https://data.iana.org/time-zones/tzdb-2021a/zone1970.tab).
+
+</Accordion>
+
+<Accordion title="Query Performance Considerations">
+    For optimized performance you should:
+
+    - Filter by record and timestamp
+    - Only select the columns needed (avoid select \* )
+
+  </Accordion>
+<Accordion title="Integration with other Data Cloud warehouses">
+Please reach out to your sales rep for setting up integrations with Databricks, Microsoft Fabric, etc.
+</Accordion>
+<Accordion title="Pulling Snap History">
+If pulling large quantities of history (particularly snaps) it is usually more efficient to load up the warehouse and pull the data asynchronously like below:
+
+```python
+from snowflake.snowpark import Session
+import pandas as pd
+from datetime import datetime, timedelta
+import time
+
+# Connection configuration
+connection = {
+    ...
+}
+
+# Create a Snowpark session
+session = Session.builder.configs(connection).create()
+
+# Define start and end dates
+start_date = datetime(2025, 1, 1)
+end_date = datetime(2025, 2, 1)
+
+# Generate a range of dates
+date_range = [
+    (start_date + timedelta(days=i)).strftime("%Y-%m-%d")
+    for i in range((end_date - start_date).days + 1)
+]
+
+# Function to run queries asynchronously
+query_list = []
+
+results_df = pd.DataFrame()
+
+for date in date_range:
+    print(f"Submitting query for date: {date}")
+    sql_cmd = f"""
+    SELECT * FROM TABLE(
+        COMMERCIAL_PACKAGES.SHARE_DEMO.icap_interest_rate_options_day_snap_1500tok(
+            TO_DATE('{date}'), '.*', '.*'
+        )
+    );
+    """
+    queryid = session.sql(sql_cmd).collect_nowait().query_id
+    async_job = session.create_async_job(queryid)
+    query_list.append(async_job)
+
+while len(query_list) > 0:
+    for qry_job in query_list:
+        if qry_job.is_done():
+            print(f"Query {qry_job.query_id} is done.")
+            query_df = qry_job.to_df().to_pandas()
+
+            query_df.to_csv(f"data_{qry_job.query_id}.csv", index=False)
+            print(f"Query {qry_job.query_id} is written.")
+            query_list.remove(qry_job)
+
+    time.sleep(10)
+    print(f"Waiting for {len(query_list)} queries to finish...")
+
+# Close the session
+session.close()
+
+```
+
+For any further questions around accessing SQL, pulling back data, etc. please reach out to [Parameta Solutions Client Support](mailto:support@parametasolutions.com) and we will be happy to assist
+
+</Accordion>    
+
+<Accordion title="Parameta Multibrand Record Naming Convention">
+This provides all the technical specifications required to process Parameta Solutions Record naming convention:
+
+```java
+[Root record name]:{Location}.{Clearing}.{Price Type}.{Frequency}!{Company}
+```
+
+For example, consider the record RFOISEUR01YAOAEST:LDN.LCH.QTE.RTM!TP
+1. 'FIELD GROUP' - First 5 Characters make up the Market Group and the Instrument or product
+2. 'CCY' - The next 3 or 6 characters refer to the CCY(s). It is possible to have two different CCYs in one record e.g., in the case of a 
+Cross Currency Swap or a Cross Currency Basis Swap
+3. 'Tenor' - This is the trade tenor. In some cases there will be two or even 3 different tenors after the CCY. So for example in a Fwd 
+Starting market you will have a '01Y01Y' or for a Butterfly you may see '02Y05Y07Y'
+4. 'Daycount/Basis' - This will only be available within certain markets. 'AOA' in the above means 'Act/360 Ann' and 'EST' relates to this 
+using ESTR discounting
+5. 'Location' - This is the region the prices are coming from. Whether they are desk prices or Parameta calculated/derived products. 
+GBL will mean that a record is contributed from more than one region and will be a 'Follow the Sun' record
+6. 'Clearing' - This is whether or not the products are traded using a specific Clearing House. The above example shows that this 
+instrument is LCH cleared
+7. 'Price Type' - This identifies the type of prices that are on the instrument. The above example is QTE which stands for Quote
+8. 'Frequency' - How often the record is updating. RTM in the above stands for Realtime updates
+9. 'Company' - Identifies which brand prices are coming from e.g., TP = Tullett Prebon, IC = ICAP
+</Accordion>
+
+</AccordionGroup>

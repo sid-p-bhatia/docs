@@ -1,0 +1,69 @@
+---
+title: "Amazon S3 Delivery"
+sidebarTitle: "Amazon S3"
+description: "Receive Parameta data delivered directly to your Amazon S3 buckets."
+---
+
+Parameta can deliver snap files and time series data directly to your **Amazon S3** buckets, enabling seamless integration with your existing AWS infrastructure and data pipelines.
+
+## Delivery Options
+
+| Option               | Description                                        |
+| -------------------- | -------------------------------------------------- |
+| **Snap Files**       | Scheduled delivery of point-in-time snapshots      |
+| **Time Series**      | Historical data delivered in bulk                  |
+| **Intraday Updates** | More frequent updates for near real-time use cases |
+
+## Supported Formats
+
+All standard data formats are supported:
+
+- CSV (Comma-Separated Values)
+- JSON (JavaScript Object Notation)
+- Parquet (Apache Parquet)
+- XML (eXtensible Markup Language)
+
+<Note>
+Parquet is recommended for large datasets (>1M rows) due to its columnar storage format and compression efficiency.
+</Note>
+
+## Configuration
+
+To set up S3 delivery, Parameta will need:
+
+1. **Bucket Name** — The target S3 bucket for data delivery
+2. **Region** — AWS region where the bucket is located
+3. **IAM Role/Policy** — Cross-account access configuration
+4. **Prefix** — Optional folder structure within the bucket
+
+### Example IAM Policy
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::PARAMETA_ACCOUNT_ID:role/DataDeliveryRole"
+      },
+      "Action": ["s3:PutObject", "s3:PutObjectAcl"],
+      "Resource": "arn:aws:s3:::your-bucket-name/*"
+    }
+  ]
+}
+```
+
+## Key Features
+
+- **Scalability** — Virtually unlimited storage capacity
+- **Durability** — 99.999999999% (11 9's) durability
+- **Global Availability** — Parameta has presence in US East, Europe, and Asia Pacific
+- **Security** — Data encrypted in transit (TLS) and at rest (SSE-S3 or SSE-KMS)
+- **Event Notifications** — Configure SNS/SQS notifications when new files arrive
+
+<Note>
+  **Technical Specifications / Documents** are available for systems developers
+  to configure S3 delivery. Please contact **Parameta Solutions** for more
+  information.
+</Note>

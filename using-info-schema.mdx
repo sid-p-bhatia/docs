@@ -1,0 +1,100 @@
+---
+title: "Using Info Schema"
+description: "The info schema is your guide to understanding Parameta's data structure, including records, field groups, naming conventions, and metadata."
+---
+
+The **INFO schema** is essential for getting started with Parameta data. It provides comprehensive metadata that helps you understand and navigate our commercial packages effectively.
+
+<CardGroup cols={2}>
+  <Card title="Records & Packages" icon="table">
+    This contains the universe of all records and commercial packages at Parameta
+  </Card>
+  <Card title="Field Groups" icon="layer-group">
+    Field definitions that explain the meaning of each data column for every Field group
+  </Card>
+</CardGroup>
+
+## What's in the Info Schema?
+
+1. **Naming conventions** — Views describing the meaning of each acronym in record names.
+
+   a. `<RECORD_NAME>:<LOCATIONS>.<CLEARING_TYPES>.<PRICE_TYPES>.<PRICING_FREQUENCIES>!<COMPANIES>`
+
+<Frame caption="Example meta data table decoding the meaning of the PRICE_TYPES attribute.">
+  ![](/images/snowflake/img-8.jpg)
+</Frame>
+
+2. Field groups - the first 5 characters of the record name indicates the field group it abides to. This can also be joined via the **FIELD_GROUP_ID** column.
+
+<Frame caption="Example field group explaining the meaning of each of the record fields.">
+  ![](/images/snowflake/img-9.jpg)
+</Frame>
+
+3. Complete list of records available in each commercial package.
+
+<Frame caption="Example view of records table showing records with id, market_group, description and additional metadata">
+  ![](/images/snowflake/img-10.jpg)
+</Frame>
+
+4. Complete list of packages available.
+
+<Frame caption="Example view of the market groups.">
+  ![](/images/snowflake/img-11.jpg)
+</Frame>
+
+## Using Market Entity
+
+The market entity concept is used to capture renames of records throughout time (see **market_entity_id** in the records table).
+
+This allows us to link related records and provide the complete history.
+
+<Frame caption="Example of linked market entity records.">
+  ![](/images/snowflake/img-12.jpg)
+</Frame>
+
+<Frame>
+  ![](/images/snowflake/img-13.jpg)
+</Frame>
+
+## Searching for Records
+
+You can search for records available in the Parameta Universe using wildcards on the record description e.g.
+
+```java
+-- Swaption ATM records
+SELECT
+  *
+FROM
+  info.records
+WHERE
+  description ILIKE '%swaption%'
+  AND description ILIKE '%ATM%';
+
+-- Payer/Receiver ATM +100 records
+SELECT
+  *
+FROM
+  info.records
+WHERE
+  description ILIKE '%swaption%'
+  AND description ILIKE '%+ 100%';
+```
+
+## Querying Views
+
+Due to the nature of the commercial packages the views contain a number of different sub assests, and so has a number of different fields.
+
+To make the queries as efficient as possible we would suggest that first the required fields are looked up in the **FIELD_GROUP** table and these fields can then be used to build the query as below.
+
+<Note>
+  **Note:** the underlying tables are clustered by record and then data, so we would advise this to be used where suitable in the filter to improve performance of the queries
+</Note>
+
+<Frame caption="Field group look up in the INFO.FIELD_GROUP table.">
+  ![](/images/snowflake/img-18.jpg)
+</Frame>
+
+<Frame caption="Query pulling back data and aliasing results to human readable names.">
+  ![](/images/snowflake/img-19.jpg)
+</Frame>
+

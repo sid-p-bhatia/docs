@@ -1,0 +1,115 @@
+---
+title: "Real Time"
+---
+
+## Real-time Streaming
+
+**Parameta** currently support several different API/technologies for sub-second data delivery from which the client can choose the method that best suits their needs:
+
+| Method          | Description                                                               |
+| --------------- | ------------------------------------------------------------------------- |
+| **WebSocket**   | Delivers data in JSON via WebSocket for real-time data streaming                           |
+| **Marketfeed**  | API leveraging Marketfeed protocol for reliable, auditable data delivery                     |
+| **EMD Connect** | Enterprise Market Data Distribution for direct infrastructure integration |
+| **FIX**      | FIX 5.0 SP2 compliant gateway for market data routing                     |
+
+Wherever your real-time data infrastructure exists, **Parameta’s** best-in-class cloud technology, market data, and technical onboarding specialists can help craft the right delivery mechanism for you.
+
+## Connectivity
+
+API data feeds are principally available over the internet, however if clients wish to connect to our infrastructure directly (e.g. via a leased line), then we have datacentres in several major locations across the globe including **London, New York** and **Singapore**. If the preference is to connect over dedicated lines e.g. CIPN (Critical Infrastructure Private Network) or B2B (Business-to-Business) these can be provided by working with our global network team.
+
+## Types of Configurations
+
+### **Parameta** cater to **Regional (A)** and Cross **Regional (B)** **AWS** **Private Link** configurations.
+
+<Frame caption="A">
+  ![](/images/img-94.jpg)
+</Frame>
+
+<Frame caption="B">
+  ![](/images/img-95.jpg)
+</Frame>
+
+### **Over-the-internet (C)** or via **Leased line (D)**. E.g.
+
+<Frame caption="C">
+  ![](/images/img-108.jpg)
+</Frame>
+
+<Frame caption="D">
+  ![](/images/img-109.jpg)
+</Frame>
+
+<Note>
+  **Technical Specifications / Documents** are available for systems developers to ingest our data. Please contact **Parameta Solutions** for more information.
+</Note>
+
+## WebSocket
+
+**Parameta’s** WebSocket service provides an efficient, scalable solution for real-time market data streaming. Using WebSocket technology, our service establishes a persistent, connection between the client and our servers, ensuring that market data such as quotes, trades, and price updates are delivered instantly and continuously with minimal latency.
+
+WebSocket delivery is ideal for clients that require immediacy of real-time data via JSON or into standard desktop applications without interrupting their workflow. 
+
+The WebSocket JSON output can be readily integrated into trading platforms, providing clients with the tools they need to monitor and respond to market movements with pace.
+
+### Key Features
+
+- **Real-time Streaming:** Continuous updates of market data price changes (including trades and quotes) optimised for fast data transmission.
+- **Efficiency:** Persistent connection reduces network overhead and unnecessary resource consumption. Data packets are optimised for continuous streaming. 
+- **Scalability:** Capable of handling numerous simultaneous client connections, making it suitable for high-traffic environments. 
+- **Secure and Reliable:** Parameta data transmitted over WebSocket is secured using the SHA-2 family of cryptographic hashing (AES – Advanced Encryption Standard). 
+- **Secure Management:** Web-based admin tool supports HTTPS for secure remote management.
+
+<Note>
+  **Async API documentation** for the Websocket is available [here](https://parametasolutions.mintlify.app/websocket/websockets/stream).
+</Note>
+
+## Marketfeed API
+
+**Parameta Solutions** deliver data via an API that leverages Marketfeed protocol designed to deliver OTC market pricing in a reliable and auditable form to all clients. The feed is delivered as a broadcast data stream over TCP/IP connections.
+
+It is derived from LSEG’s Marketfeed protocol utilising Reuter’s Appendix A as it’s field data library. This feed can be delivered via internet or leased line.
+
+The feed caters for delivery of data structures in Marketfeed-format records, chains and pages. Data is categorised by **Parameta** at the “stub” level (first 5 characters of a record) in keeping with our proprietary taxonomy rules.
+
+<Note>
+  **Technical Specifications / Documents** are available for systems developers. Please contact **Parameta Solutions** for more information.
+</Note>
+
+## EMD Direct Connect (Enterprise Market Data Distribution)
+
+For customers looking to take market data directly into their infrastructure, **Parameta's** EMD Direct Connect service offers a seamless and scalable solution for streaming real-time data into their data network. We offer a multitude of connection options to tailor to the client’s specific technical setup, locale and data distribution requirements.
+
+### Key Features
+
+- **Full Access to Inventory:** Clients of EMD Direct Connect can access Parameta’s full realtime SURFIX inventory and customisation options.
+- **Reduced Complexity and Streamlined Operations:** Direct connectivity simplifies the data flow, reducing the need for multiple intermediaries and thereby streamlining operations.
+- **Enhanced Performance and Reliability:** EMD Direct Connect will ensure high-speed data transfer with minimal latency (millisecond precision if required), leading to improved performance and reliability of data services.
+- **Cost Efficiency:** By minimizing the number of intermediaries and optimising data flow, EMD Direct Connect can lead to significant cost savings in data management and distribution.
+- **Direct Billing and Data Permissioning:** Clients can come direct to Parameta to browse/source new data, define and distribute that data via their permissioning system and manage their billing costs in an efficient and streamlined manner.
+
+### Connectivity for EMD
+
+**Parameta’s** EMD Direct Connect platform resides in AWS cloud. Our services are currently available globally across **EU-WEST-1, US-EAST-1, and AP-SOUTHEAST-1**.
+
+As the service runs in the AWS cloud, our recommended approach is to utilise AWS **PrivateLink** within the same region (e.g., EU-WEST-1, see **Example Configurations**) for optimum setup.
+
+Wherever your real-time data infrastructure exists, **Parameta’s** best-in-class cloud technology, market data, and technical onboarding specialists can help craft the right delivery mechanism for you.
+
+<Note>
+  **Technical Specifications / Documents** are available for market data onboarding and cloud / network operation specialists to enable them to connect via **EMD Direct Connect**. Please contact **Parameta Solutions** for more information.
+</Note>
+
+
+## FIX API (5.0 SP2)
+
+**Parameta’s** FIX API offering is a legacy API based on standard **FIX 5.0 SP2** (Financial Information exchange protocol, [www.fixtrading.org](https://www.fixtrading.org)) which has been adapted to **Parameta’s** specific requirements. This is therefore a FIX compliant gateway that is able to perform Market Data routing to FIX Clients:
+
+<Frame>
+  ![](/images/img-87.jpg)
+</Frame>
+
+<Note>
+  **Technical Specifications / Documents** are available for systems developers. Please contact **Parameta Solutions** for more information.
+</Note>

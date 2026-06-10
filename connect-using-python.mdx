@@ -1,0 +1,166 @@
+---
+title: "Connect Using Python"
+description: "Snowflake can be queried easily using Python by using Snowflake's snowflake-connector-python. This guide provides sample code for connecting, querying data, and working with the info schema."
+---
+
+<Note>
+  **Note:** Snowflake can be programatically accessed via various other langugages. For more information refer to [Snowflake drivers](https://docs.snowflake.com/en/developer-guide/drivers).
+</Note>
+
+## Prerequisites
+
+Install the Snowflake connector for Python:
+
+```bash
+pip install snowflake-connector-python pandas
+```
+
+## Basic Connection
+
+```python
+import snowflake.connector
+import pandas as pd
+
+connection_settings = {
+    'account': 'xyz.eu-west-1',  # add account name, typically start of URL
+    'user': 'reader',            # username
+    'password': 'password',      # password provided
+    'role': 'role',              # can be found in Snowflake UI
+    'database': 'commercial_packages'
+}
+
+with snowflake.connector.connect(**connection_settings) as ctx:
+    cur = ctx.cursor()
+    cur.execute("SELECT * FROM icap_interest_rates.icap_interest_rate_derivatives LIMIT 10")
+    df = cur.fetch_pandas_all()
+
+df.head()
+```
+
+## Searching for Records
+
+Use the info schema to search for specific records by description:
+
+```python
+# Search for swaption ATM records
+sql = """
+SELECT *
+FROM info.records
+WHERE description ILIKE '%swaption%'
+  AND description ILIKE '%ATM%'
+LIMIT 20;
+"""
+
+with snowflake.connector.connect(**connection_settings) as ctx:
+    cur = ctx.cursor()
+    cur.execute(sql)
+    records_df = cur.fetch_pandas_all()
+
+print(f"Found {len(records_df)} matching records")
+records_df[['record', 'description', 'market_group']]
+```
+
+## Working with Field Groups
+
+Look up field definitions to understand record structure:
+
+```python
+# Get field group definitions for a specific record type
+sql = """
+SELECT
+    field_name,
+    field_description,
+    data_type
+FROM info.field_groups
+WHERE field_group_id = 'IRIRS'
+ORDER BY field_name;
+"""
+
+with snowflake.connector.connect(**connection_settings) as ctx:
+    cur = ctx.cursor()
+    cur.execute(sql)
+    fields_df = cur.fetch_pandas_all()
+
+fields_df
+```
+
+## Querying with Human-Readable Aliases
+
+Build queries using field group lookups for cleaner output:
+
+```python
+sql = """
+SELECT
+    RECORD,
+    ACTIV_DATE AS "Date of Update",
+    ASK AS "Ask",
+    BID AS "Bid",
+    CCY1 AS "Currency",
+    MID_PRICE AS "Mid",
+    PERIOD1 AS "Tenor",
+    TIMACT AS "Time of Update"
+FROM icap_interest_rates.icap_interest_rate_derivatives
+WHERE RECORD LIKE 'IRIRS%'
+  AND CCY1 = 'CHF'
+LIMIT 100;
+"""
+
+with snowflake.connector.connect(**connection_settings) as ctx:
+    cur = ctx.cursor()
+    cur.execute(sql)
+    df = cur.fetch_pandas_all()
+
+df.head(10)
+```
+
+## Calling Snap Functions
+
+Use User Defined Functions (UDFs) to get point-in-time snapshots:
+
+```python
+sql = """
+SELECT
+    snap_timezone,
+    snap_end_utc,
+    RECORD,
+    BID,
+    ASK,
+    MID_PRICE,
+    CCY1 AS "Currency",
+    PERIOD1 AS "Tenor"
+FROM TABLE(
+    COMMERCIAL_PACKAGES.SHARE_CLIENT_X.ICAP_INTEREST_RATE_DERIVATIVES_LDN_DAY_SNAP_1100(
+        TO_DATE('2025-09-11'),
+        'IRIRS.*',
+        'CHF'
+    )
+);
+"""
+
+with snowflake.connector.connect(**connection_settings) as ctx:
+    cur = ctx.cursor()
+    cur.execute(sql)
+    snap_df = cur.fetch_pandas_all()
+
+snap_df
+```
+
+## Listing Available Packages
+
+Query the info schema to see all available commercial packages:
+
+```python
+sql = "SELECT * FROM info.market_groups ORDER BY market_group_name;"
+
+with snowflake.connector.connect(**connection_settings) as ctx:
+    cur = ctx.cursor()
+    cur.execute(sql)
+    packages_df = cur.fetch_pandas_all()
+
+packages_df
+```
+
+<Note>
+  For further information on the Python connector, see the [Snowflake Python
+  Connector documentation](https://docs.snowflake.com/developer-guide/python-connector/python-connector).
+</Note>

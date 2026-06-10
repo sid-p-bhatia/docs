@@ -1,0 +1,125 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Parameta Solutions",
+  "colors": {
+    "primary": "#FD7A23",
+    "light": "#FD7A23",
+    "dark": "#FD7A23"
+  },
+  "favicon": "/favicon.png",
+  "appearance": {
+    "default": "light"
+  },
+  "fonts": {
+    "heading": {
+      "family": "Space Grotesk",
+      "weight": 600
+    },
+    "body": {
+      "family": "Manrope",
+      "weight": 400
+    }
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Product Inventory",
+          "icon": "book-open-cover",
+          "href": "https://inventory.parametasolutions.com/explore"
+        },
+        {
+          "anchor": "Case Studies",
+          "icon": "book-open-cover",
+          "href": "https://www.parametasolutions.com/case-studies"
+        }
+      ]
+    },
+    "tabs": [
+      {
+        "tab": "Home",
+        "icon": "house",
+        "pages": [
+          "index"
+        ]
+      },
+      {
+        "tab": "Documentation",
+        "icon": "book-open",
+        "pages": [
+          {
+            "group": "Direct Delivery",
+            "pages": [
+              "direct-delivery/introduction",
+              "direct-delivery/real-time",
+              "direct-delivery/time-series",
+              "direct-delivery/snap-files"
+            ]
+          },
+          {
+            "group": "Snowflake",
+            "pages": [
+              "welcome",
+              "sharing",
+              "getting-started-with-reader-accounts",
+              "getting-started-with-direct-shares",
+              "navigating-in-snowSight",
+              "understanding-the-client-share-schema",
+              "using-info-schema",
+              "connect-using-python",
+              "FAQ",
+              "useful-links"
+            ]
+          },
+          {
+            "group": "Cloud Delivery",
+            "pages": [
+              "cloud-delivery/overview",
+              "sharing-copied-1",
+              "cloud-delivery/aws-s3"
+            ]
+          },
+          {
+            "group": "Channel Partners",
+            "pages": [
+              "channel-partners/overview",
+              "channel-partners/bloomberg",
+              "channel-partners/lseg"
+            ]
+          },
+          "parameta-delivery-hub-mcp"
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.webp",
+    "href": "https://www.parametasolutions.com"
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Contact Us",
+      "href": "https://www.parametasolutions.com/contact-us"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/parametasolutions/?originalSubdomain=uk"
+    }
+  }
+}

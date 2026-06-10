@@ -1,0 +1,65 @@
+---
+title: "Types of Sharing"
+description: "There are two types of data sharing available in Snowflake. With Reader Accounts, you can access shared data even without a Snowflake account, using a secure, provider‑managed environment to view and query the data. With Direct Shares, you can access live data directly within your own Snowflake account and use your own compute to query it. "
+---
+
+## Reader Account
+
+A [Reader Account](https://docs.snowflake.com/en/user-guide/data-sharing-reader-create) can be provided to allow clients to access Parameta Solution's Commercial Package offering. Access to this will be managed via your sales representative, and you will be provided a URL and login credentials.
+
+## Benefits of Reader Accounts
+
+<CardGroup cols={2}>
+  <Card title="No Infrastructure" icon="server">
+    No need to maintain your own Snowflake account or infrastructure.
+  </Card>
+  <Card title="Immediate Access" icon="bolt">
+    Start querying data immediately after receiving credentials.
+  </Card>
+  <Card title="Managed by Parameta" icon="gear">
+    Account management and maintenance handled by Parameta.
+  </Card>
+  <Card title="Cost Effective" icon="coins">
+    Ideal for trials and smaller data requirements.
+  </Card>
+</CardGroup>
+
+<Note>
+  For clients requiring more control or integration with existing Snowflake infrastructure, consider a [Direct
+  Share](/cloud-delivery/snowflake-direct-share) instead.
+</Note>
+
+## Direct Shares
+
+For Snowflake customers, [Direct shares](https://docs.snowflake.com/user-guide/data-exchange-using#label-snowsight-private-sharing-shared-with-me) enable sharing of live database objects with another Snowflake account without copying data, and the consumer pays for their own compute.
+
+
+## Benefits of Direct Share
+
+<CardGroup cols={2}>
+  <Card title="Your Infrastructure" icon="building">
+    Data lives in your existing Snowflake account with your security policies.
+  </Card>
+  <Card title="Real-time Updates" icon="rotate">
+    Data is always current — no ETL or sync processes required.
+  </Card>
+  <Card title="No Data Movement" icon="database">
+    Data is shared in place, not copied, reducing storage costs.
+  </Card>
+  <Card title="Full Control" icon="sliders">
+    Apply your own access controls, roles, and governance policies.
+  </Card>
+</CardGroup>
+
+## Integration Options
+
+Snowflake provides you with various integration options such as:
+
+- **SnowSight** — Snowflake's web-based interface
+- **Python** — Using the [snowflake-connector-python](/connect-using-python)
+- **SQL Clients** — Any SQL client that supports Snowflake
+- **BI Tools** — Tableau, Power BI, Looker, and more
+
+<Note>
+  For detailed **Technical Specifications / Documents** please refer to [Useful links](https://parametasolutions.mintlify.app/useful-links)
+</Note>

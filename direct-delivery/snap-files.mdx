@@ -1,0 +1,82 @@
+---
+title: "Snap Files"
+---
+
+## Export Data Formats / Frequency
+
+If a customer opts for direct file delivery via SFTP or Cloud then the format and frequency of the snap file delivery will need to be determined at the inception of the service. Snap file export formats vary based on the type of data being exported, the intended use, and compatibility with different applications.
+
+**Parameta** supports the main formats commonly used for data file export:
+
+1. CSV (Comma-Separated Values)
+2. JSON (JavaScript Object Notation)
+3. XML (eXtensible Markup Language)
+4. XLS/XLSX (Microsoft Excel Spreadsheet)
+5. PDF (Portable Document Format)
+6. PARQUET (Apache Parquet)
+7. TXT (Plain Text)
+
+### Which format suits your needs?
+
+- CSV or XLSX exports are common for tabular/time series data (\< 1m rows).
+- JSON and XML are ideal for structured/extensible or hierarchical data (e.g. trade data)
+- Parquet and Avro are suited for very large datasets (\>1m rows).
+
+<Note>
+  Customers can request the snap times and frequency at which files are delivered to them.
+
+  This is dependent on the market type, market hours, size and delivery method of files. Typically for snap files these are delivered intra-day or end-of-day but bespoke delivery is also configurable on request.
+</Note>
+
+## Parameta SFTP
+
+**SFTP** (Secure File Transfer Protocol) services are network protocols used for securely transferring files between entities over a secure, encrypted connection. SFTP provides all of the functionality of traditional FTP (File Transfer Protocol) but with an added layer of security, using SSH (Secure Shell) to encrypt the file transfer.
+
+To establish the SFTP Service, **Parameta** will first confirm what format the files to be delivered will be. We can export to most industry standard formats (see **Export Data Formats**) and work with each client to determine their preferred snap times, file names, if files are to be standardised or split into asset classes, and whether a push/pull connection is required etc.
+
+### Key Features
+
+- **Compliance:** Many organizations require SFTP services to comply with data protection regulations such as GDPR, HIPAA, and PCI-DSS, which require secure data handling and transmission.
+- **User Authentication:** Multiple methods including username/ password, key-based (SSH key) and multi-factor authentication are supported, providing flexibility and enhanced security.
+- **Encryption:** All data transmitted through our SFTP service is securely encrypted using SSH, ensuring the confidentiality and integrity of data files. Cipher’s/MACs and Key Exchanges can be configured to the client’s specific requirements:
+
+<Frame>
+  ![](/images/img-5.jpg)
+</Frame>
+
+- **Reliability:** Our service ensures that files are not corrupted or altered during transmission through checksums and hashing mechanisms.
+- **File Management:** Users can perform file management operations (upload, download, rename, delete, and move files) securely over the SFTP connection.
+- **Firewall-Friendly:** SFTP operates on a single port (e.g. Port 22), making it easy to configure and secure within firewalls on the client-side.
+- **Full Access Control:** Parameta Administrators manage user permissions, ensuring that only authorised users have access to specific files or directories.
+- **Logging and Auditing:** Detailed logs are maintained for each file transfer, aiding in troubleshooting and compliance with regulatory requirements.
+
+<Note>
+  **Technical Specifications / Documents** are available for systems developers to retrieve files via **Parameta SFTP**. Please contact **Parameta Solutions** for more information.
+</Note>
+
+## Cloud Delivery
+
+As per our **Parameta SFTP** service, snap file delivery to cloud can be requested by the client.
+
+We can export to most industry standard formats (see **Export Data Formats**). Data can be extracted to any cloud repository including **Amazon S3, Google Cloud Storage** or **Azure Blob** etc. depending on the client’s needs.
+
+<Note>
+  Customers can request the frequency at which files are delivered to them.
+
+  This is dependent on the market type, market hours, size and delivery method of files. Typically for snap files these are delivered **intra-day** or **endof-day** but bespoke delivery is also configurable on request.
+</Note>
+
+### Key Features
+
+**Parameta’s** ability to drop data into cloud repositories like Amazon S3 enables customers to store and analyse data in their own environments leveraging the scalability and security of their preferred cloud infrastructure provider. Via this method, we offer -
+
+- **Scalability:** Cloud service providers offer virtually unlimited storage, allowing customers to scale their storage capacity as needed without worrying about hardware limitations.
+- **Accessibility:** **Parameta** data stored in cloud repositories can be accessed from anywhere in the world using APIs or via the services’ management console.
+- **Global Availability:** **Parameta** has presence in every major availability zone (US East, Europe [London], Asia Pac [Singapore]) to meet the client where they are.
+- **Durability, Availability and Immediacy:** Cloud providers offer high durability, meaning that the likelihood of losing data is extremely low. Top tier cloud providers offer high availability across their various storage class options.
+- **Security:** Data is encrypted both at rest and in transit using industrystandard protocols (e.g., AES-256, SSL/TLS etc.)
+
+<Note>
+  **Technical Specifications / Documents** are available for systems developers to retrieve files via **Cloud Repositories**. Please contact **Parameta
+  Solutions** for more information.
+</Note>

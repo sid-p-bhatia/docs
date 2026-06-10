@@ -1,0 +1,29 @@
+---
+title: 'Getting started with Reader Accounts'
+---
+
+## Getting Started
+
+1. **Receive Credentials** — Your Parameta sales representative will provide you with a URL and login credentials
+2. **Sign In** — Navigate to the provided URL and enter your credentials
+3. **Access Data** — Once signed in, you can immediately start querying data
+
+<Frame caption="Example login page that a client will be greeted with when navigating to the URL">
+  ![](/images/snowflake/img-1.jpg)
+</Frame>
+
+## Querying Data
+
+Once you sign in, you can access the data by following **\+ New Project \> SQL Worksheet**. You will then see on the left-hand side the data you have available to you.
+
+<Frame caption="Example of running a query in Snowflake's SQL worksheet.">
+  ![](/images/snowflake/img-2.jpg)
+</Frame>
+
+### Example Query
+
+```sql
+SELECT *
+FROM icap_interest_rates.icap_interest_rate_derivatives
+LIMIT 10;
+```

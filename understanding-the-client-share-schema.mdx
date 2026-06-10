@@ -1,0 +1,299 @@
+---
+title: "Using the Data Schema"
+description: "When data is shared with a client, a custom schema, views, and functions (if applicable) are provisioned. Views are used to provide intraday tick data and functions are used to provide snapped data. These allow you to retrieve data based on your license agreement. In your client schema you will also have a records view which contains the records you are permissioned for."
+---
+
+<Frame caption="Client record view in the client schema.">
+  ![](/images/snowflake/img-7.jpg)
+</Frame>
+
+<Note>
+  **Note:** It's important you understand the [Info Schema](https://parametasolutions.mintlify.app/using-info-schema?_mintlify-live-preview=true#what%E2%80%99s-in-the-info-schema) to understand the data structure and how best to configure your queries.
+</Note>
+
+## Sample Queries
+
+### Searching for Records entitled to you
+
+You can search for records using wildcards on the record description e.g.
+
+```java
+-- Swaption ATM records
+SELECT
+  *
+FROM
+  COMMERCIAL_PACKAGES.SHARE_CLIENT_X.RECORDS
+WHERE
+  description ILIKE '%swaption%'
+  AND description ILIKE '%ATM%';
+
+-- Payer/Receiver ATM +100 records
+SELECT
+  *
+FROM
+  COMMERCIAL_PACKAGES.SHARE_CLIENT_X.RECORDS
+WHERE
+  description ILIKE '%swaption%'
+  AND description ILIKE '%+ 100%';
+```
+
+<Note>
+  **Note:** You can also search for records within the Parameta universe in the [Info Schema](https://parametasolutions.mintlify.app/using-info-schema?_mintlify-live-preview=true#searching-for-records).
+</Note>
+
+### Retrieve All records within the data
+
+```java
+SELECT 
+  * 
+FROM 
+  COMMERCIAL_PACKAGES.SHARE_CLIENT_X.CLIENTX_IRO
+limit 10;
+```
+
+### Data for a specific record name
+
+```java
+SELECT 
+  * 
+FROM COMMERCIAL_PACKAGES.SHARE_CLIENT_X.CLIENTX_IRO
+WHERE 
+  name ='IVSWPGBL40003Y15Y:LDN.BIL.QTE.RTM!IC';
+```
+
+### Date range available for a record
+
+```java
+SELECT 
+  RECORD,
+  MIN(ACTIV_DATE) AS EARLIEST_ACTIV_DATE, 
+  MAX(ACTIV_DATE) AS LATEST_ACTIV_DATE
+FROM 
+  COMMERCIAL_PACKAGES.SHARE_CLIENT_X.CLIENTX_IRO
+WHERE 
+  record IN ('IVSWPGBL40003Y15Y:LDN.BIL.QTE.RTM!IC')
+GROUP BY
+  RECORD;
+```
+
+### Retrieve applicable fields for a record/ field group
+
+```java
+SELECT 
+  * 
+FROM 
+  COMMERCIAL_PACKAGES.INFO.FIELD_GROUP
+WHERE 
+  NAME = 'IVSWR';
+```
+<Note>
+  **Note:** Here 'Field Group' is represented by the first 5 characters of the record name. Refer the [Info schema documentation](https://parametasolutions.mintlify.app/using-info-schema) for more details.
+</Note>
+
+
+### Data for a record with applicable fields for the last 1 month
+
+```java
+SELECT
+  RECORD,
+  event_timestamp,
+  ACTIV_DATE "Date of Udpate",
+  BPV "Skew Payer Daily Normal Volatility (business days)",
+  CCY1 "Currency",
+  DAY_COUNT "Daycount",
+  FOR_PREM "ATM Forward Premium",
+  FWD1_PRICE "Skew Strike",
+  GEN_VAL10 "DV01",
+  GEN_VAL2 "ATM Normal Vol",
+  GN_TX20_1 "Settlement",
+  GN_TX20_2 "Settlement Index",
+  GN_TX20_3 "Discounting",
+  GN_TXT16_2 "description of structure",
+  GN_TXT32_1 "Option Collateralisation",
+  GN_TXT32_2 "Tail Collateralisation",
+  GN_TXT32_4 "Instrument Description",
+  IMP_VOLT "ATM Lognormal Volatility",
+  PERIOD1 "Tenor #  1",
+  PERIOD2 "Tenor #  2",
+  PREMIUM "ATM Spot Premium",
+  STLVAL1_1 "Skew Payer Log Vol",
+  STLVAL1_2 "Skew Payer Shifted Log Vol",
+  STLVAL1_3 "Skew Payer Norm Vol",
+  STLVAL1_4 "Skew Payer Premium",
+  STLVAL1_5 "Skew Payer Forward Premium",
+  STLVAL1_6 "Spot Collar Payer Prem",
+  STLVAL1_7 "Collar Payer Black Vol Skew",
+  STLVAL1_8 "Payer Strangle/Collar Norm Vol",
+  STLVAL1_9 "Collar Payer Shifted Black Vol Skew",
+  STLVAL2_6 "Shifted Lognormal Volatility",
+  STLVAL2_7 "Amount of Shift",
+  STLVAL3_1 "Collar Spot Premium",
+  STLVAL3_2 "Collar Forward Premium",
+  STLVAL3_3 "Strangle Spot Premium",
+  STLVAL3_4 "Strangle Forward Premium",
+  STLVAL3_5 "Strangle Payer Premium",
+  STRIKE_PRC "ATM Strike",
+  TIMACT "Time of Update",
+  VALUE_DT1 "Expiry Date"
+FROM 
+  COMMERCIAL_PACKAGES.SHARE_CLIENT_X.CLIENTX_IRO
+WHERE 
+  record ='IVSWPGBL40003Y15Y:LDN.BIL.QTE.RTM!IC'
+  AND
+  event_timestamp >= DATEADD('day', -30, CURRENT_DATE)
+  AND
+  event_timestamp <= CURRENT_DATE
+ORDER BY 
+  event_timestamp desc;
+```
+
+## Calling Snap Functions
+
+If requested, we provide snapshots of data via User Defined Functions (UDF), which dynamically snap data based on the provided snap time. The snap provides the latest tick to the requested snap time based on a 24 hour look back period. To call these functions you can provide the following arguments:
+
+```java
+table(
+  COMMERCIAL_PACKAGES.SHARE_CLIENT_X.ICAP_INTEREST_RATE_DERIVATIVES_LDN_DAY_SNAP_1100(
+    to_date('<date_str>'),
+    '<regex_record_lookup>',
+    '<regex_currency_lookup>'
+  )
+)
+```
+
+### An example with a Field group and Currency pair:
+
+```java
+SELECT
+  snap_timezone,
+  snap_end_ltz,
+  snap_end_utc,
+  EVENT_TIMESTAMP,
+  RECORD,
+  ACTIV_DATE "Date of Update",
+  ASK "Ask",
+  BID "Bid",
+  CCY1 "Currency",
+  GN_TX20_2 "Settlement Index",
+  GN_TXT16_2 "Daycount",
+  GN_TXT32_4 "Instrument Description",
+  MID_PRICE "Mid",
+  PERIOD1 "Tenor",
+  TIMACT "Time of Update",
+  VALUE_DT1 "Start Date",
+  VALUE_DT2 "End Date"
+FROM
+  TABLE(
+    COMMERCIAL_PACKAGES.SHARE_CLIENT_X.ICAP_INTEREST_RATE_DERIVATIVES_LDN_DAY_SNAP_1100(
+      TO_DATE('2025-09-11'),
+      'IRIRS.*',
+      'CHF'
+    )
+  );
+```
+
+### An example with all currencies within a Field group:
+
+```java
+SELECT
+  snap_timezone,
+  snap_end_ltz,
+  snap_end_utc,
+  EVENT_TIMESTAMP,
+  RECORD,
+  ACTIV_DATE "Date of Update",
+  ASK "Ask",
+  BID "Bid",
+  CCY1 "Currency",
+  GN_TX20_2 "Settlement Index",
+  GN_TXT16_2 "Daycount",
+  GN_TXT32_4 "Instrument Description",
+  MID_PRICE "Mid",
+  PERIOD1 "Tenor",
+  TIMACT "Time of Update",
+  VALUE_DT1 "Start Date",
+  VALUE_DT2 "End Date"
+FROM
+  TABLE(
+    COMMERCIAL_PACKAGES_PRD.SHARE_CLIENT_X.ICAP_INTEREST_RATE_DERIVATIVES_DAY_SNAP_1600LDN_DAY_SNAP_160000LDN(
+      TO_DATE('2025-09-11'),
+      'IRIRS.*',
+      '.*'
+    )
+  );
+```
+
+### Pulling Snap History
+
+If pulling large quantities of history (particularly snaps) it is usually more efficient to load up the warehouse and pull the data asynchronously 
+like below (sample code in python):
+
+```python
+from snowflake.snowpark import Session
+import pandas as pd
+from datetime import datetime, timedelta
+import time
+# Connection configuration
+connection = {
+  ...
+}
+# Create a Snowpark session
+session = Session.builder.configs(connection).create()
+# Define start and end dates
+start_date = datetime(2025, 1, 1)
+end_date = datetime(2025, 2, 1)
+# Generate a range of dates
+date_range = [(start_date + timedelta(days=i)).strftime("%Y-%m-%d") for i in range((end_date - start_date).days + 1)]
+# Function to run queries asynchronously
+query_list = []
+results_df = pd.DataFrame()
+for date in date_range:
+    print(f"Submitting query for date: {date}")
+    sql_cmd = f"""
+    SELECT * FROM TABLE(
+        COMMERCIAL_PACKAGES.SHARE_DEMO.icap_interest_rate_options_day_snap_1500tok(
+            TO_DATE('{date}'), '.*', '.*'
+        )
+    );
+    """
+    queryid = session.sql(sql_cmd).collect_nowait().query_id
+    async_job = session.create_async_job(queryid)
+    query_list.append(async_job)
+while len(query_list) > 0:
+    for qry_job in query_list:
+        if qry_job.is_done():
+            print(f"Query {qry_job.query_id} is done.")
+            query_df = qry_job.to_df().to_pandas()
+            query_df.to_csv(f"data_{qry_job.query_id}.csv", index=False)
+            print(f"query_listery {qry_job.query_id} is written.")
+            query_list.remove(qry_job)  
+    time.sleep(10)
+    print(f"Waiting for {len(query_list)} queries to finish...")
+# Close the session
+session.close()
+```
+
+<Frame caption="Calling the functions like above.">
+  ![](/images/snowflake/img-24.jpg)
+</Frame>
+
+## Charting
+
+You can visualize your worksheet results using charts and dashboards in SnowSight.
+
+<Note>
+  **Note:** charting results are limited to 1M so to get around this aggregate your results before bringing through to charting.
+</Note>
+
+<Frame caption="Example of charting results from Snowflake Query">
+  ![](/images/snowflake/img-25.jpg)
+</Frame>
+
+<Frame caption="Example dashboard charting price and record information">
+  ![](/images/snowflake/img-28.jpg)
+</Frame>
+
+<Frame caption="Example plotting an IRS CHF curve">
+  ![](/images/snowflake/img-29.jpg)
+</Frame>
+
